@@ -1,7 +1,7 @@
 variable "vpc_version" {
   description = "Version of the VPC module"
   type        = string
-  default     = "5.0.0"
+  default     = "6.1.1"
 }
 
 variable "rds_version" {

@@ -1,0 +1,80 @@
+name: jig-terraform-check
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  check-module-versions:
+    name: jig-terraform-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Check Terraform module version compliance
+        shell: bash
+        run: |
+          FAILED=0
+
+          while IFS= read -r -d '' tf_file; do
+            python3 - "$tf_file" <<'PYEOF'
+          import sys, re
+
+          tf_file = sys.argv[1]
+          modules_to_check = [
+            {"source": "github.com/jig-test-custome/test-tf-modules", "check_type": "ref", "desired": "main"},
+            {"source": "terraform-aws-modules/vpc/aws", "check_type": "version", "desired": "6.1.1"},
+          ]
+
+          with open(tf_file) as f:
+              content = f.read()
+
+          module_blocks = re.findall(r'module\s+"[^"]+"\s*\{([^}]+)\}', content, re.DOTALL)
+
+          for entry in modules_to_check:
+              module_source = entry["source"]
+              check_type = entry["check_type"]
+              desired_value = entry["desired"]
+
+              for block in module_blocks:
+                  source_match = re.search(r'source\s*=\s*"([^"]+)"', block)
+                  if not source_match:
+                      continue
+
+                  source = source_match.group(1)
+                  source_base = re.sub(r'\?ref=.*$', '', source)
+
+                  if check_type == 'ref':
+                      if source_base != module_source:
+                          continue
+                      ref_match = re.search(r'\?ref=(.+)$', source)
+                      current = ref_match.group(1) if ref_match else ''
+                  else:
+                      if source != module_source:
+                          continue
+                      ver_match = re.search(r'version\s*=\s*"([^"]+)"', block)
+                      if ver_match is None:
+                          continue  # version is a variable reference, not a literal — skip
+                      current = ver_match.group(1)
+
+                  if current != desired_value:
+                      print(f"FAIL: {tf_file}: module source '{module_source}' has {check_type}='{current}', expected '{desired_value}'")
+                      sys.exit(1)
+          PYEOF
+
+            if [ $? -ne 0 ]; then
+              FAILED=1
+            fi
+          done < <(find . -name '*.tf' -not -path './.terraform/*' -print0)
+
+          if [ $FAILED -ne 0 ]; then
+            echo ""
+            echo "Module version policy violation detected."
+            echo "Expected module 'github.com/jig-test-custome/test-tf-modules' to use ref='main'."
+            echo "Expected module 'terraform-aws-modules/vpc/aws' to use version='6.1.1'."
+            echo "Run 'jig run' or merge the Jig reconciliation PR to fix this."
+            exit 1
+          fi
+
+          echo "All terraform module versions are compliant."

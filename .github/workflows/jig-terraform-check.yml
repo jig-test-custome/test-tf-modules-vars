@@ -23,8 +23,7 @@ jobs:
 
           tf_file = sys.argv[1]
           modules_to_check = [
-            {"source": "github.com/jig-test-custome/test-tf-modules", "check_type": "ref", "desired": "main"},
-            {"source": "terraform-aws-modules/vpc/aws", "check_type": "version", "desired": "6.1.1"},
+            {"source": "terraform-aws-modules/vpc/aws", "check_type": "version", "desired": "6.2.0"},
           ]
 
           with open(tf_file) as f:
@@ -71,8 +70,7 @@ jobs:
           if [ $FAILED -ne 0 ]; then
             echo ""
             echo "Module version policy violation detected."
-            echo "Expected module 'github.com/jig-test-custome/test-tf-modules' to use ref='main'."
-            echo "Expected module 'terraform-aws-modules/vpc/aws' to use version='6.1.1'."
+            echo "Expected module 'terraform-aws-modules/vpc/aws' to use version='6.2.0'."
             echo "Run 'jig run' or merge the Jig reconciliation PR to fix this."
             exit 1
           fi

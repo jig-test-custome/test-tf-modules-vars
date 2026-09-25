@@ -14,8 +14,7 @@
 - Do not commit secrets, tokens, API keys, or credentials
 - Use structured commit messages for traceability (type: subject format)
 
-## SOC 2 Compliance (advisory)
-- Ensure all changes include an audit trail via structured commit messages
-- Do not bypass the PR review process — all AI-generated changes must go through review
-- Do not modify access control, logging, or monitoring configuration without review
+## FedRAMP Compliance (advisory)
+- Do not use commercial AI tools to process or generate federal contract information
+- All AI-generated code touching data handling must be reviewed before merge
 <!-- JIG:END -->

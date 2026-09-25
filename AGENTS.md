@@ -18,13 +18,4 @@
 - Do not paste or reference Controlled Unclassified Information (CUI) in AI prompts or tool inputs
 - Any AI-assisted change to sensitive paths requires human review before merge
 - Use only FedRAMP-authorized tooling when working in CUI-adjacent repos
-
-## SOC 2 Compliance (advisory)
-- Ensure all changes include an audit trail via structured commit messages
-- Do not bypass the PR review process — all AI-generated changes must go through review
-- Do not modify access control, logging, or monitoring configuration without review
-
-## FedRAMP Compliance (advisory)
-- Do not use commercial AI tools to process or generate federal contract information
-- All AI-generated code touching data handling must be reviewed before merge
 <!-- JIG:END -->

@@ -2,7 +2,7 @@
 > [!IMPORTANT]
 > **Managed by Jig** — Auto-generated compliance content. Manual edits _inside this block_ will be overwritten on next sync.
 
-# AI Agent Standards — Managed by Jig
+# AI Coding Standards (Cursor) — Managed by Jig
 # Do not edit between the JIG markers below. Add your own rules above or below them.
 - Do not push directly to main or master
 - Run tests before committing (make test or equivalent)
